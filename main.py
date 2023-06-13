@@ -108,6 +108,25 @@ def votos_titulo(titulo_de_la_filmacion):
     #return f"La película {titulo} fue estrenada en el año {a_estreno}.La misma cuenta con un total de {votos} valoraciones, con un promedio de {promedio_votos}"
     return f'titulo:{titulo}, anio:{a_estreno}, voto_total:{votos}, voto_promedio:{promedio_votos}'
 
+@app.get("/get_actor/{nombre_actor}")
+def get_actor(nombre_actor):
+    
+    # Filtrar el DataFrame por el nombre del actor
+    df_actor = df[df['cast'].apply(lambda x: nombre_actor in x)]
+    
+    # Verificar si se encontró el actor
+    if len(df_actor) == 0:
+        return f"No se encontró el actor {nombre_actor}"
+    
+    # Filtrar el DataFrame para excluir las filas correspondientes a directores
+    #df_actor = df_actor[df_actor['Rol'] != 'Director']
+    
+    # Obtener los datos del actor (cantidad de filmaciones, éxito y promedio de retorno)
+    cantidad_filmaciones = len(df_actor)
+    exito = df_actor['return'].sum()
+    promedio_retorno = df_actor['return'].mean()
+    return {'actor':nombre_actor, 'cantidad_filmaciones':cantidad_filmaciones, 'retorno_total':exito, 'retorno_promedio':promedio_retorno}
+
 @app.get("/get_director/{nombre_director}")
 
 def get_director(nombre_director):
